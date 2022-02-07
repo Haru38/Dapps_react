@@ -1,25 +1,126 @@
-import logo from './logo.svg';
 import './App.css';
+import contract from './contracts/MpTest.json';
+import { useState } from 'react';
+import { ethers } from 'ethers';
+
+const contractAddress = "0x441A02F510381856d4C7DE6e26978Ab25B4cB7ac";
+const abi = contract.abi;
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	const [errorMessage, setErrorMessage] = useState(null);
+	const [defaultAccount, setDefaultAccount] = useState(null);
+	const [connButtonText, setConnButtonText] = useState('Connect Wallet');
+
+	const [currentContractVal, setCurrentContractVal] = useState(null);
+
+	const [provider, setProvider] = useState(null);
+	const [signer, setSigner] = useState(null);
+	const [contract, setContract] = useState(0);
+
+	const connectWalletHandler = async () => {
+		if (window.ethereum && window.ethereum.isMetaMask) {
+			window.ethereum.request({ method: 'eth_requestAccounts'})
+			.then(result => {
+				accountChangedHandler(result[0]);
+				setConnButtonText('Wallet Connected');
+			})
+			.catch(error => {
+				setErrorMessage(error.message);
+			});
+		} else {
+			console.log('Need to install MetaMask');
+			setErrorMessage('Please install MetaMask browser extension to interact');
+		}
+	}
+
+	// update account, will cause component re-render
+	const accountChangedHandler = (newAccount) => {
+		setDefaultAccount(newAccount);
+		updateEthers();
+	}
+
+	const chainChangedHandler = () => {
+		// reload the page to avoid any errors with chain change mid use of application
+		window.location.reload();
+	}
+
+	// listen for account changes
+	window.ethereum.on('accountsChanged', accountChangedHandler);
+	window.ethereum.on('chainChanged', chainChangedHandler);
+
+
+
+	const updateEthers = () => {
+		let tempProvider = new ethers.providers.Web3Provider(window.ethereum);
+		setProvider(tempProvider);
+
+		let tempSigner = tempProvider.getSigner();
+		setSigner(tempSigner);
+
+		let tempContract = new ethers.Contract(contractAddress, abi, tempSigner);
+		setContract(tempContract);
+
+	}
+
+  const mintNftHandler = async () => {
+      try {
+        console.log("Initialize payment");
+        let nftTxn = await contract.createToken(2);
+        console.log("Mining... please wait");
+        await nftTxn.wait();
+        console.log(`Mined, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`);
+      } catch (err) {
+        console.log(err);
+      }
+  }
+
+  const mintNftButton = () => {
+    return (
+      <button onClick={mintNftHandler} className='cta-button mint-nft-button'>
+        Mint NFT
+      </button>
+    )
+  }
+
+  const connectWalletButton = () => {
+    return (
+      <button onClick={connectWalletHandler} className='cta-button connect-wallet-button'>
+        Connect Wallet
+      </button>
+    )
+  }
+
+	// const getCurrentVal = async () => {
+	// 	try {
+	// 		let val = await contract.totalSupply();
+	// 		setCurrentContractVal(parseInt(val["_hex"], 16));
+	// 	} catch (err) {
+	// 		console.log(err);
+	// 	}
+	// }
+
+	// const getTotalSupplyBottun =()=>{
+	// 	return(
+	// 		<button onClick={getCurrentVal} className='cta-button ts-button'>
+	// 			total Supply
+	// 		</button>
+	// 	)
+	// }
+
+	// <h2>total supply : {getTotalSupplyBottun()}</h2>
+	// {currentContractVal}
+
+	return (
+		<div className='main-app'>
+		<h1> {"Mint Page"} </h1>
+          	{defaultAccount ? mintNftButton() : connectWalletButton()}
+			<div>
+				<h3>Your wallet address</h3>
+          			{defaultAccount}
+			</div>
+
+		</div>
+	);
 }
 
 export default App;
