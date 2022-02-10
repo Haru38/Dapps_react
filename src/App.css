@@ -3,6 +3,30 @@
   margin: 100px;
 }
 
+.kakomi-box10 {
+  margin: 2em auto;
+  padding: 1em;
+  width: 40%;
+  border: 5px double #8491c3; /*太さ・線種・色*/
+  color: #333; /* 文字色 */
+  background-color: #fff; /* 背景色 */
+  border-radius: 1px; /*角の丸み*/
+ }
+
+.normal{
+  font-size:16px;
+  line-height:normal;
+  }
+  p.small{
+  line-height:90%;
+  }
+  p.big{
+  line-height:200%;
+  }
+
+
+
+
 .cta-button {
   padding: 15px;
   border: none;

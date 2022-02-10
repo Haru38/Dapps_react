@@ -5,6 +5,8 @@ import { ethers } from 'ethers';
 
 const contractAddress = "0x441A02F510381856d4C7DE6e26978Ab25B4cB7ac";
 const abi = contract.abi;
+const networkName = "Rinkeby"
+const chainId = 4
 
 
 
@@ -56,7 +58,7 @@ function App() {
 		let tempProvider = new ethers.providers.Web3Provider(window.ethereum);
 		setProvider(tempProvider);
 		let network = await tempProvider.getNetwork();
-		if (network.chainId === 4){
+		if (network.chainId === chainId){
 			let tempSigner = tempProvider.getSigner();
 			setSigner(tempSigner);
 
@@ -67,7 +69,6 @@ function App() {
 			setCurrentContractVal(parseInt(val["_hex"], 16));
 		}else{
 			setDefaultAccount(null);
-			console.log("not correct chain id")
 		}
 	}
 
@@ -99,16 +100,40 @@ function App() {
     	)
   	}
 
-	return (
-		<div className='main-app'>
-		<h1> {"Mint Page"} </h1>
-          	{defaultAccount ? mintNftButton() : connectWalletButton()}
+	const getAccountAddress=()=>{
+		return(
 			<div>
-				<h3>Your wallet address</h3>
-          			{defaultAccount}
-				<h2>total supply : {currentContractVal} / 1000</h2>
+				<p className = "big"><br></br>Your address<br></br></p>
+				<font size="4">
+					<b>{defaultAccount}</b>
+				</font>
 			</div>
-		</div>
+		)
+	}
+
+	const warningConnect=()=>{
+		return(
+			<div>
+				<p className = "big"><br></br>Connect to the {networkName} network<br></br></p>
+			</div>
+		)
+	}
+
+	return (
+			<div className='main-app'>
+				<h1> Mint Page </h1>
+					<div className="kakomi-box10">
+						<p className = "big">Total Supply<br></br></p>
+						<font size="50"><b>{currentContractVal} / 1000</b></font>
+						<div>
+							{defaultAccount ? getAccountAddress() : warningConnect()}
+						</div>
+						<p><br></br><br></br><br></br></p>
+						<div>
+							{defaultAccount ? mintNftButton() : connectWalletButton()}
+						</div>
+					</div>
+			</div>
 	);
 }
 
