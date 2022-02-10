@@ -6,6 +6,8 @@ import { ethers } from 'ethers';
 const contractAddress = "0x441A02F510381856d4C7DE6e26978Ab25B4cB7ac";
 const abi = contract.abi;
 
+
+
 function App() {
 	const [errorMessage, setErrorMessage] = useState(null);
 	const [defaultAccount, setDefaultAccount] = useState(null);
@@ -17,7 +19,7 @@ function App() {
 	const [signer, setSigner] = useState(null);
 	const [contract, setContract] = useState(null);
 
-	const connectWalletHandler = async () => {
+	const connectWalletHandler = () => {
 		if (window.ethereum && window.ethereum.isMetaMask) {
 			window.ethereum.request({ method: 'eth_requestAccounts'})
 			.then(result => {
@@ -53,16 +55,20 @@ function App() {
 	const updateEthers = async() => {
 		let tempProvider = new ethers.providers.Web3Provider(window.ethereum);
 		setProvider(tempProvider);
+		let network = await tempProvider.getNetwork();
+		if (network.chainId === 4){
+			let tempSigner = tempProvider.getSigner();
+			setSigner(tempSigner);
 
-		let tempSigner = tempProvider.getSigner();
-		setSigner(tempSigner);
+			let tempContract = new ethers.Contract(contractAddress, abi, tempSigner);
+			setContract(tempContract);
 
-		let tempContract = new ethers.Contract(contractAddress, abi, tempSigner);
-		setContract(tempContract);
-
-		let val = await tempContract.totalSupply();
-		setCurrentContractVal(parseInt(val["_hex"], 16));
-
+			let val = await tempContract.totalSupply();
+			setCurrentContractVal(parseInt(val["_hex"], 16));
+		}else{
+			setDefaultAccount(null);
+			console.log("not correct chain id")
+		}
 	}
 
   	const mintNftHandler = async () => {
@@ -102,7 +108,6 @@ function App() {
           			{defaultAccount}
 				<h2>total supply : {currentContractVal} / 1000</h2>
 			</div>
-
 		</div>
 	);
 }
