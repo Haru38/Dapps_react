@@ -7,6 +7,7 @@ const contractAddress = "0xb4Cc619F07e6F171620621C776274b7E8E013587";
 const abi = contract.abi;
 const networkName = "Rinkeby"
 const chainId = 4
+const max_num = 10
 
 function App() {
 	const [errorMessage, setErrorMessage] = useState(null);
@@ -83,11 +84,17 @@ function App() {
   }
 
   	const mintNftButton = () => {
-    	return (
-      		<button onClick={mintNftHandler} className='cta-button mint-nft-button'>
-        		Mint NFT
-      		</button>
-    	)
+		if (currentContractVal < max_num){
+			return (
+				<button onClick={mintNftHandler} className='cta-button mint-nft-button'>
+				  Mint NFT
+				</button>
+		  )
+		}else{
+			return (
+				<font size="50"><b>sold out</b></font>
+			)
+		}
   	}
 
   	const connectWalletButton = () => {
@@ -122,10 +129,8 @@ function App() {
 				<h1> Mint Page </h1>
 					<div className="kakomi-box10">
 						<p className = "big">Total Supply<br></br></p>
-						<font size="50"><b>{currentContractVal} / 10</b></font>
-						<div>
-							{defaultAccount ? getAccountAddress() : warningConnect()}
-						</div>
+						<font size="50"><b>{currentContractVal} / {max_num}</b></font>
+						{defaultAccount ? getAccountAddress() : warningConnect()}
 						<p><br></br><br></br><br></br></p>
 						<div>
 							{defaultAccount ? mintNftButton() : connectWalletButton()}

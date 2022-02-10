@@ -7,7 +7,7 @@
   margin: 2em auto;
   padding: 1em;
   width: 40%;
-  border: 5px double #8491c3; /*太さ・線種・色*/
+  border: 5px double rebeccapurple; /*太さ・線種・色*/
   color: #333; /* 文字色 */
   background-color: #fff; /* 背景色 */
   border-radius: 1px; /*角の丸み*/
@@ -27,15 +27,7 @@
 
 
 
-.cta-button {
-  padding: 15px;
-  border: none;
-  border-radius: 12px;
-  min-width: 250px;
-  color: white;
-  font-size: 18px;
-  cursor: pointer;
-}
+
 
 .connect-wallet-button {
   background: rgb(32, 129, 226);
@@ -53,6 +45,7 @@
   color: white;
   font-size: 18px;
   cursor: pointer;
+  box-shadow: 5px 10px 20px rgba(0,0,0,0.25);
 }
 
 .ts-button {
