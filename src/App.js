@@ -15,7 +15,7 @@ function App() {
 
 	const [provider, setProvider] = useState(null);
 	const [signer, setSigner] = useState(null);
-	const [contract, setContract] = useState(0);
+	const [contract, setContract] = useState(null);
 
 	const connectWalletHandler = async () => {
 		if (window.ethereum && window.ethereum.isMetaMask) {
@@ -50,7 +50,7 @@ function App() {
 
 
 
-	const updateEthers = () => {
+	const updateEthers = async() => {
 		let tempProvider = new ethers.providers.Web3Provider(window.ethereum);
 		setProvider(tempProvider);
 
@@ -60,9 +60,12 @@ function App() {
 		let tempContract = new ethers.Contract(contractAddress, abi, tempSigner);
 		setContract(tempContract);
 
+		let val = await tempContract.totalSupply();
+		setCurrentContractVal(parseInt(val["_hex"], 16));
+
 	}
 
-  const mintNftHandler = async () => {
+  	const mintNftHandler = async () => {
       try {
         console.log("Initialize payment");
         let nftTxn = await contract.createToken(2);
@@ -74,41 +77,21 @@ function App() {
       }
   }
 
-  const mintNftButton = () => {
-    return (
-      <button onClick={mintNftHandler} className='cta-button mint-nft-button'>
-        Mint NFT
-      </button>
-    )
-  }
+  	const mintNftButton = () => {
+    	return (
+      		<button onClick={mintNftHandler} className='cta-button mint-nft-button'>
+        		Mint NFT
+      		</button>
+    	)
+  	}
 
-  const connectWalletButton = () => {
-    return (
-      <button onClick={connectWalletHandler} className='cta-button connect-wallet-button'>
-        Connect Wallet
-      </button>
-    )
-  }
-
-	// const getCurrentVal = async () => {
-	// 	try {
-	// 		let val = await contract.totalSupply();
-	// 		setCurrentContractVal(parseInt(val["_hex"], 16));
-	// 	} catch (err) {
-	// 		console.log(err);
-	// 	}
-	// }
-
-	// const getTotalSupplyBottun =()=>{
-	// 	return(
-	// 		<button onClick={getCurrentVal} className='cta-button ts-button'>
-	// 			total Supply
-	// 		</button>
-	// 	)
-	// }
-
-	// <h2>total supply : {getTotalSupplyBottun()}</h2>
-	// {currentContractVal}
+  	const connectWalletButton = () => {
+    	return (
+      		<button onClick={connectWalletHandler} className='cta-button connect-wallet-button'>
+        		Connect Wallet
+      		</button>
+    	)
+  	}
 
 	return (
 		<div className='main-app'>
@@ -117,6 +100,7 @@ function App() {
 			<div>
 				<h3>Your wallet address</h3>
           			{defaultAccount}
+				<h2>total supply : {currentContractVal} / 1000</h2>
 			</div>
 
 		</div>
