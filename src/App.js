@@ -3,12 +3,10 @@ import contract from './contracts/MpTest.json';
 import { useState } from 'react';
 import { ethers } from 'ethers';
 
-const contractAddress = "0x441A02F510381856d4C7DE6e26978Ab25B4cB7ac";
+const contractAddress = "0xb4Cc619F07e6F171620621C776274b7E8E013587";
 const abi = contract.abi;
 const networkName = "Rinkeby"
 const chainId = 4
-
-
 
 function App() {
 	const [errorMessage, setErrorMessage] = useState(null);
@@ -75,7 +73,7 @@ function App() {
   	const mintNftHandler = async () => {
       try {
         console.log("Initialize payment");
-        let nftTxn = await contract.createToken(2);
+        let nftTxn = await contract.createToken();
         console.log("Mining... please wait");
         await nftTxn.wait();
         console.log(`Mined, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`);
@@ -124,7 +122,7 @@ function App() {
 				<h1> Mint Page </h1>
 					<div className="kakomi-box10">
 						<p className = "big">Total Supply<br></br></p>
-						<font size="50"><b>{currentContractVal} / 1000</b></font>
+						<font size="50"><b>{currentContractVal} / 10</b></font>
 						<div>
 							{defaultAccount ? getAccountAddress() : warningConnect()}
 						</div>
