@@ -1,4 +1,4 @@
-# ボタン一つでNFTが手に入るwebアプリのプロトタイプ
+# NFT generate app
 
 ## 使い方
 - トップディレクトリで`npm start`
